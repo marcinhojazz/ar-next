@@ -6,14 +6,17 @@ export default function ARScene({ onMarkerVisible }) {
   useEffect(() => {
     const marker = document.querySelector("a-marker");
     if (marker) {
+      console.log("Marcador <a-marker> encontrado no DOM");
       marker.addEventListener("markerFound", () => {
-        console.log("Marcador encontrado");
+        console.log("🔥 EVENTO markerFound DISPARADO");
         onMarkerVisible(true);
       });
       marker.addEventListener("markerLost", () => {
-        console.log("Marcador perdido");
+        console.log("🚫 EVENTO markerLost DISPARADO");
         onMarkerVisible(false);
       });
+    } else {
+      console.warn("❌ <a-marker> não encontrado no DOM.");
     }
   }, [onMarkerVisible]);
 

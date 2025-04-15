@@ -1,12 +1,32 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useRef, useState, useCallback } from "react";
 import Head from "next/head";
 import dynamic from "next/dynamic";
 import Script from "next/script";
+import { Canvas, useFrame } from "@react-three/fiber";
+import { OrbitControls } from "@react-three/drei";
 
 // Importa a cena AR apenas no client
 const ARScene = dynamic(() => import("../components/ARScene"), { ssr: false });
+
+function RotatingCube() {
+  const meshRef = useRef(null);
+
+  useFrame((state, delta) => {
+    if (meshRef.current) {
+      meshRef.current.rotation.x += delta;
+      meshRef.current.rotation.y += delta;
+    }
+  });
+
+  return (
+    <mesh ref={meshRef}>
+      <boxGeometry args={[1, 1, 1]} />
+      <meshStandardMaterial color="orange" />
+    </mesh>
+  );
+}
 
 export default function ARPage() {
   const [markerVisible, setMarkerVisible] = useState(false);
@@ -35,8 +55,21 @@ export default function ARPage() {
         strategy="beforeInteractive"
       />
 
-      {/* A cena já cobre toda a tela */}
-      <ARScene onMarkerVisible={handleMarkerVisibility} />
+      <div className="fixed inset-0 z-0">
+        <ARScene onMarkerVisible={handleMarkerVisibility} />
+
+        {/* Renderiza o cubo apenas quando o marcador estiver visível */}
+        {markerVisible && (
+          <div className="absolute inset-0 z-10 pointer-events-none">
+            <Canvas camera={{ position: [0, 0, 5] }}>
+              <ambientLight intensity={0.5} />
+              <directionalLight position={[0, 10, 5]} intensity={1} />
+              <RotatingCube />
+              <OrbitControls enableZoom={false} />
+            </Canvas>
+          </div>
+        )}
+      </div>
     </>
   );
 }

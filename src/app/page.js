@@ -8,7 +8,6 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import Script from "next/script";
 
-// importa a cena AR apenas no client
 const ARScene = dynamic(() => import("../components/ARScene"), { ssr: false });
 
 function RotatingCube() {
@@ -40,9 +39,11 @@ export default function ARPage() {
     <>
       <Head>
         <title>Experiência AR Customizada</title>
+        {/* Prioriza layout responsivo mobile */}
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
       </Head>
 
-      {/* Scripts externos controlados */}
+      {/* Scripts externos do AR.js e A-Frame */}
       <Script
         src="https://aframe.io/releases/1.3.0/aframe.min.js"
         strategy="beforeInteractive"
@@ -52,13 +53,16 @@ export default function ARPage() {
         strategy="beforeInteractive"
       />
 
-      <div className="w-screen h-screen relative overflow-hidden">
+      <div className="relative" style={{ width: "100vw", height: "100dvh" }}>
         {/* Cena AR carregada apenas no client */}
         <ARScene onMarkerVisible={handleMarkerVisibility} />
 
-        {/* Só mostra o canvas 3D quando o marcador estiver visível */}
+        {/* Renderização do modelo 3D com R3F (caso ainda use Canvas sobreposto) */}
         {markerVisible && (
-          <div className="absolute inset-0 pointer-events-none z-10">
+          <div
+            className="absolute top-0 left-0 w-full h-full z-10"
+            style={{ touchAction: "none" }}
+          >
             <Canvas camera={{ position: [0, 0, 5] }}>
               <ambientLight intensity={0.5} />
               <directionalLight position={[0, 10, 5]} intensity={1} />

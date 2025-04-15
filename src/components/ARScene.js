@@ -27,7 +27,13 @@ export default function ARScene({ onMarkerVisible }) {
         arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: true;"
       >
         <a-marker type="pattern" url="/pattern-jacaredigital.patt">
-          <a-entity position="0 0 0"></a-entity>
+          {/* Objeto 3D preso ao marcador */}
+          <a-box
+            position="0 0.5 0"
+            rotation="0 45 0"
+            color="orange"
+            animation="property: rotation; to: 0 405 0; loop: true; dur: 3000"
+          ></a-box>
         </a-marker>
         <a-entity camera></a-entity>
       </a-scene>
